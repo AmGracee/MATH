@@ -1,1 +1,51 @@
 
+def Dijkstra(network,s,d):#计算s -> d的最短路径,network为邻接矩阵
+    print('Start Dijkstra Path...')
+    path = [] # 用来存储最短路径
+    n = len(network)  #邻接矩阵，即节点个数
+    fmax = 999
+    w = [[0 for i in range(n)]for j in range(n)]  #初始化邻接矩阵全部用0填充，邻接矩阵中的0代表MAX,邻接矩阵转化为维度矩阵
+    book = [0 for i in range(n)] #是否已经是最小的标记列表
+    dis = [ fmax for i in range(n)] #存放s到其他节点最小的距离
+    book[s-1]=1 # 节点编号从1开始，列表序号从0开始
+    last_hop = [-1 for i in range(n)] #上一跳列表
+    #节点不是直连的用max填充 0 -> max
+    #初始化
+    for i in range(n):
+        for j in range(n):
+            if network[i][j] != 0 :
+                w[i][j] = network[i][j]  # 0转化成MAX
+            else:
+                w[i][j] = fmax
+            if network[i][j] != 0 and i == s-1 : # 直连的信息存入dis中
+                dis[j] = network[i][j]
+    # Dijkstra算法 开始遍历
+    for i in range(n-1): #n-1次遍历，除了s节点
+        min = fmax
+        for j in range(n):
+            if book[j]==0 and dis[j]<min:
+                min = dis[j]
+                u = j  #把小的值和序号记下来
+        book[u]=1
+        for v in range(n): # 将当前小的值u的相邻节点再遍历一遍
+            if dis[v] > dis[u]+w[u][v]:
+                dis[v] = dis[u]+w[u][v]
+                last_hop[v] = u+1 #更新上一跳
+    j = d-1 #j是序号
+    path.append(d)
+    while(last_hop[j] != -1):
+        path.append(last_hop[j])
+        j = last_hop[j]-1
+    path.append(s)
+    path.reverse()#倒置列表
+    print(path)
+    print(dis)
+
+network = [[0,1,0,2,0,0],
+           [1,0,2,4,3,0],
+           [0,2,0,0,1,4],
+           [2,4,0,0,6,0],
+           [0,3,1,6,0,2],
+           [0,0,4,0,2,0]]
+
+Dijkstra(network,1,6)
